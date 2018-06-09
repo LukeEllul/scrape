@@ -18,6 +18,7 @@ const apply = R.curry((driver, promise, ops, f) =>
     apply(
         driver,
         R.pipe(
+            op => Tuple(toPromise(Tuple.fst(op)), toPromise(Tuple.snd(op))),
             op => promise.then(
                 v => Tuple.fst(op)(driver, v).then(R.identity, err => Tuple.snd(op)(driver, err)))
         )(R.head(ops)),

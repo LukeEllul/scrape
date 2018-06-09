@@ -15,6 +15,7 @@
   "homepage": "https://bitbucket.org/webautomation69/scrape#readme",
   "dependencies": {
     "ramda": "^0.25.0",
-    "ramda-fantasy": "^0.8.0"
+    "ramda-fantasy": "^0.8.0",
+    "selenium-webdriver": "^4.0.0-alpha.1"
   }
 }
