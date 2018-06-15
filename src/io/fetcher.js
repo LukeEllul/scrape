@@ -4,7 +4,7 @@ const { waitForDom } = require('../inject/inject');
 const { apply } = require('../low-level/apply');
 
 /**
- * get :: (String, Number?) -> [Tuple(a -> b, c -> d)]
+ * get :: (String, Number?) -> [Tuple((driver, a) -> b, (driver, err) -> d)]
  */
 const get = (url, tries = 0) => [
     Tuple(

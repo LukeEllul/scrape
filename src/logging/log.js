@@ -1,8 +1,8 @@
-const log = v => console.log(v) || v;
-
-const logReject = v => log(v) || Promise.reject(v);
+/**
+ * logReject :: v -> ((driver, a) -> Promise _ a)
+ */
+const logReject = v => (driver, a) => console.log(v) || Promise.reject(a);
 
 module.exports = {
-    log,
     logReject
 };
