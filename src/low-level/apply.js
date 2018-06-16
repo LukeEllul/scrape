@@ -20,7 +20,7 @@ const apply = R.curry((driver, promise, ops, f) =>
         R.pipe(
             op => Tuple(toPromise(Tuple.fst(op)), toPromise(Tuple.snd(op))),
             op => promise.then(
-                v => Tuple.fst(op)(driver, v).then(R.identity, err => Tuple.snd(op)(driver, err)))
+                v => Tuple.fst(op)(driver, v).then(v => v, err => Tuple.snd(op)(driver, err)))
         )(R.head(ops)),
         R.tail(ops),
         f

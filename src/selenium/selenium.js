@@ -4,7 +4,11 @@ const { Builder } = require('selenium-webdriver');
 /**
  * makeDriver :: String -> Driver
  */
-const makeDriver = browser => new Builder().forBrowser(browser).usingServer(`http://localhost:4444/wd/hub`);
+const makeDriver = browser => 
+    new Builder()
+    .forBrowser(browser)
+    .usingServer(`http://localhost:4444/wd/hub`)
+    .build();
 
 module.exports = {
     makeDriver

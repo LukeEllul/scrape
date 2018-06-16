@@ -1,7 +1,7 @@
 const R = require('ramda');
 const { Tuple } = require('ramda-fantasy');
 const { get } = require('../io/fetcher');
-const { injectJquery, injectScript } = require('../inject/inject');
+const { injectJquery, injectScript, injectRamda } = require('../inject/inject');
 const { apply } = require('../low-level/apply');
 const { logReject } = require('../logging/log');
 
@@ -16,6 +16,7 @@ const scrape = R.curry((url, args, f) => [
             [
                 ...get(url),
                 ...injectJquery,
+                ...injectRamda,
                 ...injectScript(3, f, args)
             ],
             driver => promise => promise
