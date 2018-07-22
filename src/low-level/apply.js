@@ -2,6 +2,10 @@ const R = require('ramda');
 const { Tuple } = require('ramda-fantasy');
 
 /**
+ * type Action = [Tuple((driver, v) -> b, (driver, v) -> d)]
+ */
+
+/**
  * toPromise :: (*a -> b) -> Bool -> (*a -> Promise b err)
  */
 const toPromise = f =>
