@@ -6,6 +6,16 @@ const { apply } = require('../low-level/apply');
 const { logReject } = require('../logging/log');
 
 /**
+ * process :: (a -> a) -> Action
+ */
+const P = f => [
+    Tuple(
+        (_, v) => f(v),
+        logReject(`error occured while using function ${f.toString()}`)
+    )
+];
+
+/**
  * scrape :: String -> [a] -> (v -> *a -> _) -> [Tuple((driver, a) -> b, (driver, c) -> d)]
  */
 const scrape = R.curry((url, args, f) => [
@@ -29,5 +39,6 @@ const scrape = R.curry((url, args, f) => [
 ]);
 
 module.exports = {
-    scrape
+    scrape,
+    P
 };

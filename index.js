@@ -4,7 +4,7 @@ const { logReject } = require('./src/logging/log');
 const { apply } = require('./src/low-level/apply');
 const { get } = require('./src/io/fetcher');
 const { injectJquery, injectScript, injectUrlScript, injectRamda } = require('./src/inject/inject');
-const { scrape } = require('./src/scrape/scrape');
+const { scrape, P } = require('./src/scrape/scrape');
 const { makeDriver } = require('./src/selenium/selenium');
 
 module.exports = {
@@ -17,5 +17,6 @@ module.exports = {
     scrape,
     makeDriver,
     Tuple,
-    logReject
+    logReject,
+    P
 };
