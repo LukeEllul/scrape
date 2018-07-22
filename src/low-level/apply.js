@@ -18,7 +18,7 @@ const toPromise = f =>
  * apply :: Driver -> Promise v err -> [Tuple((driver, v) -> b, (driver, v) -> d)] -> (Driver -> Promise x err -> q) -> q
  */
 const apply = R.curry((driver, promise, ops, f) =>
-    ops.length === 0 ? f(driver)(promise) :
+    ops.length === 0 ? f.f(driver)(promise, f.ops) :
     apply(
         driver,
         R.pipe(
@@ -27,7 +27,7 @@ const apply = R.curry((driver, promise, ops, f) =>
                 v => Tuple.fst(op)(driver, v).then(v => v, err => Tuple.snd(op)(driver, err)))
         )(R.head(ops)),
         R.tail(ops),
-        f
+        typeof f === "function" ? {f, ops} : f
     ));
 
 module.exports = {
