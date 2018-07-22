@@ -19,7 +19,7 @@ const get = (url, wait=100, tries = 0) => [
             return apply(
                 driver,
                 Promise.resolve(v),
-                get(url, wait, tries + 1),
+                get(url, wait + 200, tries + 1),
                 driver => promise => promise
             );
         }
