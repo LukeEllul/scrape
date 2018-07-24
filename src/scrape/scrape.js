@@ -38,7 +38,44 @@ const scrape = R.curry((url, args, f) => [
     )
 ]);
 
+/**
+ * injectBasics :: Action
+ */
+const injectBasics = [
+    Tuple(
+        (driver, v) => apply(
+            driver,
+            Promise.resolve(v),
+            [
+                ...injectJquery,
+                ...injectRamda
+            ],
+            _ => promise => promise.then(_ => v)
+        ),
+        logReject(`error while injecting basics`)
+    )
+];
+
+/**
+ * combine :: ([{f: (v -> *a -> _), args: [a]} | (v -> *a -> _)], ?(a -> [a] -> a)) -> Action
+ */
+const combine = (fs, f) => [
+    Tuple(
+        (driver, v) => Promise.all(fs.map(f => 
+            apply(
+                driver,
+                Promise.resolve(v),
+                typeof f === 'function' ? injectScript(3, f, []) : injectScript(3, f.f, f.args),
+                _ => promise => promise
+            )))
+            .then(res => f ? f(v)(res) : res),
+        logReject(`error while combining injection scripts: ${fs.map(f => f.toString())}`)
+    )
+];
+
 module.exports = {
     scrape,
-    P
+    P,
+    injectBasics,
+    combine
 };
