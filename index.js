@@ -5,7 +5,7 @@ const { apply } = require('./src/low-level/apply');
 const { get } = require('./src/io/fetcher');
 const { injectJquery, injectScript, injectUrlScript, injectRamda } = require('./src/inject/inject');
 const { scrape, P, injectBasics, combine } = require('./src/scrape/scrape');
-const { makeDriver } = require('./src/selenium/selenium');
+const { makeDriver, close } = require('./src/selenium/selenium');
 
 module.exports = {
     apply,
@@ -20,5 +20,6 @@ module.exports = {
     logReject,
     P,
     injectBasics,
-    combine
+    combine,
+    close
 };
