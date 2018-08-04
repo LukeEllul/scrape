@@ -61,13 +61,30 @@ const injectBasics = [
  */
 const combine = (fs, f) => [
     Tuple(
-        (driver, v) => Promise.all(fs.map(f => 
-            apply(
-                driver,
-                Promise.resolve(v),
-                typeof f === 'function' ? injectScript(3, f, []) : injectScript(3, f.f, f.args),
-                _ => promise => promise
-            )))
+        (driver, v) => Promise.all(fs.map(f => {
+            if (Array.isArray(f)) {
+                const fn = f[0];
+                return apply(
+                    driver,
+                    Promise.resolve(v),
+                    [
+                        ...typeof fn === 'function' ? injectScript(3, fn, []): injectScript(3, fn.f, fn.args),
+                        Tuple(
+                            (_, v) => f[1](v),
+                            logReject(`error while calling function ${f[1].toString()} after ${fn.toString()}`)
+                        )
+                    ],
+                    _ => promise => promise
+                )
+            } else {
+                return apply(
+                    driver,
+                    Promise.resolve(v),
+                    typeof f === 'function' ? injectScript(3, f, []) : injectScript(3, f.f, f.args),
+                    _ => promise => promise
+                );
+            }
+        }))
             .then(res => f ? f(v)(res) : res),
         logReject(`error while combining injection scripts: ${fs.map(f => f.toString())}`)
     )
