@@ -63,16 +63,17 @@ const combine = (fs, f) => [
     Tuple(
         (driver, v) => Promise.all(fs.map(f => {
             if (Array.isArray(f)) {
-                const fn = f[0];
+                const functions = R.flatten(f);
+                const fn = functions[0];
                 return apply(
                     driver,
                     Promise.resolve(v),
                     [
                         ...typeof fn === 'function' ? injectScript(3, fn, []): injectScript(3, fn.f, fn.args),
-                        Tuple(
-                            (_, v) => f[1](v),
-                            logReject(`error while calling function ${f[1].toString()} after ${fn.toString()}`)
-                        )
+                        ...R.tail(functions).map(f => Tuple(
+                            (driver, v) => f(v, driver),
+                            logReject(`error while calling function: ${f.toString()}`)
+                        ))
                     ],
                     _ => promise => promise
                 )
