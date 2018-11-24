@@ -6,7 +6,7 @@ const { apply } = require('../low-level/apply');
 const { logReject } = require('../logging/log');
 
 /**
- * process :: (a -> a) -> Action
+ * P :: (a -> a) -> Action
  */
 const P = f => [
     Tuple(
@@ -14,6 +14,13 @@ const P = f => [
         logReject(`error occured while using function ${f.toString()}`)
     )
 ];
+
+/**
+ * I :: (v -> *a -> cb -> b) -> Action
+ * 
+ * Used to inject script quicky.
+ */
+const I = (f, args = [], trials = 3) => injectScript(trials, f, args);
 
 /**
  * scrape :: String -> [a] -> (v -> *a -> _) -> [Tuple((driver, a) -> b, (driver, c) -> d)]
@@ -69,7 +76,7 @@ const combine = (fs, f) => [
                     driver,
                     Promise.resolve(v),
                     [
-                        ...typeof fn === 'function' ? injectScript(3, fn, []): injectScript(3, fn.f, fn.args),
+                        ...typeof fn === 'function' ? injectScript(3, fn, []) : injectScript(3, fn.f, fn.args),
                         ...R.tail(functions).map(f => typeof f !== 'function' ? f : Tuple(
                             (driver, v) => f(v, driver),
                             logReject(`error while calling function: ${f.toString()}`)
@@ -91,9 +98,48 @@ const combine = (fs, f) => [
     )
 ];
 
+/**
+ * E :: [Action] -> Action
+ * 
+ * Execute actions in series.
+ */
+const E = actions => [
+    Tuple(
+        (driver, v) =>
+            apply(
+                driver,
+                Promise.resolve(v),
+                actions.reduce((actions, action) => actions.concat(action)),
+                _ => promise => promise
+            ),
+        logReject(`error in E function with these actions: ${actions}`)
+    )
+];
+
+/**
+ * EP :: [Action] -> Action
+ * 
+ * Execute Actions in parallel.
+ */
+const EP = actions => [
+    Tuple(
+        (driver, v) => Promise.all(actions.map(action =>
+            apply(
+                driver,
+                Promise.resolve(v),
+                action,
+                _ => promise => promise
+            ))),
+        logReject(`Error occured when exeuting EP!`)
+    )
+];
+
 module.exports = {
     scrape,
     P,
     injectBasics,
-    combine
+    combine,
+    E,
+    EP,
+    I
 };
