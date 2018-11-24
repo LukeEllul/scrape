@@ -19,17 +19,35 @@ const toPromise = f =>
  */
 const apply = R.curry((driver, promise, ops, f) =>
     ops.length === 0 ? f.f(driver)(promise, f.ops) :
-    apply(
-        driver,
-        R.pipe(
-            op => Tuple(toPromise(Tuple.fst(op)), toPromise(Tuple.snd(op))),
-            op => promise.then(
-                v => Tuple.fst(op)(driver, v).then(v => v, err => Tuple.snd(op)(driver, err)))
-        )(R.head(ops)),
-        R.tail(ops),
-        typeof f === "function" ? {f, ops} : f
-    ));
+        apply(
+            driver,
+            R.pipe(
+                op => Tuple(toPromise(Tuple.fst(op)), toPromise(Tuple.snd(op))),
+                op => promise.then(
+                    v => Tuple.fst(op)(driver, v).then(v => v, err => Tuple.snd(op)(driver, err)))
+            )(R.head(ops)),
+            R.tail(ops),
+            typeof f === "function" ? { f, ops } : f
+        ));
+
+/**
+ * D :: ((Driver, v) -> Driver) -> Action -> Action
+ * 
+ * Execute action in passed driver.
+ */
+const D = R.curry((driverF, action) => [
+    Tuple(
+        (driver, v) => apply(
+            driverF(driver, v),
+            Promise.resolve(v),
+            action,
+            _ => promise => promise
+        ),
+        logReject(`Error occured when injecting new Driver`)
+    )
+]);
 
 module.exports = {
-    apply
+    apply,
+    D
 };

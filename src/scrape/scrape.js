@@ -10,7 +10,7 @@ const { logReject } = require('../logging/log');
  */
 const P = f => [
     Tuple(
-        (_, v) => f(v),
+        (driver, v) => f(v, driver),
         logReject(`error occured while using function ${f.toString()}`)
     )
 ];
