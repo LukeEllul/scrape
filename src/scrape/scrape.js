@@ -135,6 +135,21 @@ const EP = actions => [
 ];
 
 /**
+ * C :: (a -> Action) -> Action
+ * 
+ * {f} takes value returned from promise of previous action
+ */
+const C = f => [Tuple(
+    (driver, v) => apply(
+        driver,
+        Promise.resolve(v),
+        f(v),
+        _ => promise => promise
+    ),
+    logReject('error occured while applying C function')
+)];
+
+/**
  * wait :: Number -> Action
  */
 const wait = milliseconds => [
@@ -152,5 +167,6 @@ module.exports = {
     E,
     EP,
     I,
-    wait
+    wait,
+    C
 };

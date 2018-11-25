@@ -4,7 +4,8 @@ const { logReject, log } = require('./src/logging/log');
 const { apply, D, Identity } = require('./src/low-level/apply');
 const { get } = require('./src/io/fetcher');
 const { injectJquery, injectScript, injectUrlScript, injectRamda } = require('./src/inject/inject');
-const { scrape, P, injectBasics, combine, I, E, EP, wait } = require('./src/scrape/scrape');
+const {injectReadStream, injectStreamer} = require('./src/io/streams');
+const { scrape, P, injectBasics, combine, I, E, EP, wait, C } = require('./src/scrape/scrape');
 const { makeDriver, close } = require('./src/selenium/selenium');
 
 module.exports = {
@@ -28,5 +29,8 @@ module.exports = {
     D,
     wait,
     log,
-    Identity
+    Identity,
+    C,
+    injectReadStream,
+    injectStreamer
 };
