@@ -134,6 +134,16 @@ const EP = actions => [
     )
 ];
 
+/**
+ * wait :: Number -> Action
+ */
+const wait = milliseconds => [
+    Tuple(
+        (_, v) => new Promise(res => setTimeout(() => res(v), milliseconds)),
+        logReject(`Error occured while waiting for ${milliseconds} ms`)
+    )
+];
+
 module.exports = {
     scrape,
     P,
@@ -141,5 +151,6 @@ module.exports = {
     combine,
     E,
     EP,
-    I
+    I,
+    wait
 };

@@ -1,10 +1,10 @@
 const R = require('ramda');
 const { Tuple } = require('ramda-fantasy');
-const { logReject } = require('./src/logging/log');
+const { logReject, log } = require('./src/logging/log');
 const { apply, D } = require('./src/low-level/apply');
 const { get } = require('./src/io/fetcher');
 const { injectJquery, injectScript, injectUrlScript, injectRamda } = require('./src/inject/inject');
-const { scrape, P, injectBasics, combine, I, E, EP } = require('./src/scrape/scrape');
+const { scrape, P, injectBasics, combine, I, E, EP, wait } = require('./src/scrape/scrape');
 const { makeDriver, close } = require('./src/selenium/selenium');
 
 module.exports = {
@@ -25,5 +25,7 @@ module.exports = {
     I,
     E,
     EP,
-    D
+    D,
+    wait,
+    log
 };

@@ -1,5 +1,6 @@
 const R = require('ramda');
 const { Tuple } = require('ramda-fantasy');
+const { logReject } = require('../logging/log');
 
 /**
  * type Action = [Tuple((driver, v) -> b, (driver, v) -> d)]

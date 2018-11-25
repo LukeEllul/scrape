@@ -2,7 +2,8 @@ const R = require('ramda');
 const { apply, D } = require('../src/low-level/apply');
 const { get } = require('../src/io/fetcher');
 const { injectJquery, injectScript, injectUrlScript, injectRamda } = require('../src/inject/inject');
-const { scrape, E, EP, P, I } = require('../src/scrape/scrape');
+const { scrape, E, EP, P, I, wait } = require('../src/scrape/scrape');
+const { log } = require('../src/logging/log');
 const { makeDriver } = require('../src/selenium/selenium');
 
 const Driver = makeDriver('chrome');
@@ -25,6 +26,9 @@ apply(
                 }),
             ])
         ]),
+        log('waiting'),
+        wait(3000),
+        log('waited'),
         D(() => Driver.build(), E([
             get('https://www.google.com'),
             P(v => 1),
