@@ -48,7 +48,20 @@ const D = R.curry((driverF, action) => [
     )
 ]);
 
+/**
+ * Identity :: Action
+ * 
+ * Simply returns the current promise value.
+ */
+const Identity = [
+    Tuple(
+        (_, v) => v,
+        logReject('error occured in identity')
+    )
+];
+
 module.exports = {
     apply,
-    D
+    D,
+    Identity
 };

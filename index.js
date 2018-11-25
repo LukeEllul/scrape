@@ -1,7 +1,7 @@
 const R = require('ramda');
 const { Tuple } = require('ramda-fantasy');
 const { logReject, log } = require('./src/logging/log');
-const { apply, D } = require('./src/low-level/apply');
+const { apply, D, Identity } = require('./src/low-level/apply');
 const { get } = require('./src/io/fetcher');
 const { injectJquery, injectScript, injectUrlScript, injectRamda } = require('./src/inject/inject');
 const { scrape, P, injectBasics, combine, I, E, EP, wait } = require('./src/scrape/scrape');
@@ -27,5 +27,6 @@ module.exports = {
     EP,
     D,
     wait,
-    log
+    log,
+    Identity
 };
