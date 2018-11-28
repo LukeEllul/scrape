@@ -6,23 +6,6 @@ const { apply } = require('../low-level/apply');
 const { logReject } = require('../logging/log');
 
 /**
- * P :: (a -> a) -> Action
- */
-const P = f => [
-    Tuple(
-        (driver, v) => f(v, driver),
-        logReject(`error occured while using function ${f.toString()}`)
-    )
-];
-
-/**
- * I :: (v -> *a -> cb -> b) -> Action
- * 
- * Used to inject script quicky.
- */
-const I = (f, args = [], trials = 3) => injectScript(trials, f, args);
-
-/**
  * scrape :: String -> [a] -> (v -> *a -> _) -> [Tuple((driver, a) -> b, (driver, c) -> d)]
  */
 const scrape = R.curry((url, args, f) => [
@@ -98,75 +81,8 @@ const combine = (fs, f) => [
     )
 ];
 
-/**
- * E :: [Action] -> Action
- * 
- * Execute actions in series.
- */
-const E = actions => [
-    Tuple(
-        (driver, v) =>
-            apply(
-                driver,
-                Promise.resolve(v),
-                actions.reduce((actions, action) => actions.concat(action)),
-                _ => promise => promise
-            ),
-        logReject(`error in E function with these actions: ${actions}`)
-    )
-];
-
-/**
- * EP :: [Action] -> Action
- * 
- * Execute Actions in parallel.
- */
-const EP = actions => [
-    Tuple(
-        (driver, v) => Promise.all(actions.map(action =>
-            apply(
-                driver,
-                Promise.resolve(v),
-                action,
-                _ => promise => promise
-            ))),
-        logReject(`Error occured when exeuting EP!`)
-    )
-];
-
-/**
- * C :: (a -> Action) -> Action
- * 
- * {f} takes value returned from promise of previous action
- */
-const C = f => [Tuple(
-    (driver, v) => apply(
-        driver,
-        Promise.resolve(v),
-        f(v),
-        _ => promise => promise
-    ),
-    logReject('error occured while applying C function')
-)];
-
-/**
- * wait :: Number -> Action
- */
-const wait = milliseconds => [
-    Tuple(
-        (_, v) => new Promise(res => setTimeout(() => res(v), milliseconds)),
-        logReject(`Error occured while waiting for ${milliseconds} ms`)
-    )
-];
-
 module.exports = {
-    scrape,
-    P,
     injectBasics,
     combine,
-    E,
-    EP,
-    I,
-    wait,
-    C
+    scrape
 };

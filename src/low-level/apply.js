@@ -1,10 +1,5 @@
 const R = require('ramda');
 const { Tuple } = require('ramda-fantasy');
-const { logReject } = require('../logging/log');
-
-/**
- * type Action = [Tuple((driver, v) -> b, (driver, v) -> d)]
- */
 
 /**
  * toPromise :: (*a -> b) -> Bool -> (*a -> Promise b err)
@@ -12,7 +7,7 @@ const { logReject } = require('../logging/log');
 const toPromise = f =>
     (...a) => {
         const v = f(...a);
-        return v.then ? v : Promise.resolve(v);
+        return v && v.then ? v : Promise.resolve(v);
     };
 
 /**
@@ -31,37 +26,6 @@ const apply = R.curry((driver, promise, ops, f) =>
             typeof f === "function" ? { f, ops } : f
         ));
 
-/**
- * D :: ((Driver, v) -> Driver) -> Action -> Action
- * 
- * Execute action in passed driver.
- */
-const D = R.curry((driverF, action) => [
-    Tuple(
-        (driver, v) => apply(
-            driverF(driver, v),
-            Promise.resolve(v),
-            action,
-            _ => promise => promise
-        ),
-        logReject(`Error occured when injecting new Driver`)
-    )
-]);
-
-/**
- * Identity :: Action
- * 
- * Simply returns the current promise value.
- */
-const Identity = [
-    Tuple(
-        (_, v) => v,
-        logReject('error occured in identity')
-    )
-];
-
 module.exports = {
-    apply,
-    D,
-    Identity
+    apply
 };

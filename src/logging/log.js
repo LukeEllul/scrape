@@ -1,9 +1,9 @@
 const { Tuple } = require('ramda-fantasy');
 
 /**
- * logReject :: v -> ((driver, a) -> Promise _ a)
+ * logReject :: (v | (err -> v)) -> ((driver, a) -> Promise _ a)
  */
-const logReject = v => (driver, a) => console.log(v) || Promise.reject(a);
+const logReject = v => (driver, a) => console.log(typeof v === 'function' ? v(a) : v) || Promise.reject(a);
 
 /**
  * log :: (String?) -> Action

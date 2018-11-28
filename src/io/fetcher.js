@@ -1,32 +1,33 @@
 const R = require('ramda');
+const urlExists = require('url-exists');
 const { Tuple } = require('ramda-fantasy');
-const { waitForDom } = require('../inject/inject');
-const { apply } = require('../low-level/apply');
+const { logReject } = require('../logging/log');
+const { trials } = require('../low-level/actions');
 
 /**
- * get :: (String, Number?) -> [Tuple((driver, a) -> b, (driver, err) -> d)]
+ * simpleGet :: String -> Action
  */
-const get = (url, wait=100, tries = 0) => [
+const simpleGet = url => [
     Tuple(
-        (driver, v) => driver.get(url).then(_ => v, err => Promise.reject({ err, v })),
-        (driver, { err, v }) => {
-            console.log(err);
-            console.log();
-            console.log(`couldnt get ${url}`);
-            if (tries > 5) return Promise.reject({err, v});
-            console.log(`trying for ${tries}th time`);
-            console.log();
-            return apply(
-                driver,
-                Promise.resolve(v),
-                get(url, wait + 200, tries + 1),
-                driver => promise => promise
-            );
-        }
+        (_, v) => new Promise((res, rej) => urlExists(url, (err, exists) =>
+            exists ? res(v) : rej(err))),
+        logReject(`cannot reach ${url} because it doesn't exist`)
     ),
-    ...waitForDom(wait)
+    Tuple(
+        (driver, v) => driver.get(url).then(_ => v, err => Promise.reject(err)),
+        logReject(`cannot get ${url}`)
+    )
 ];
 
+/**
+ * get :: String -> Action
+ * 
+ * {url} url of site to get 
+ */
+const get = url => trials(3, ms => ms ? ms + 2000 : 3000, 
+    simpleGet(url));
+
 module.exports = {
+    simpleGet,
     get
 };

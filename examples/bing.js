@@ -5,7 +5,7 @@ const { injectJquery, injectScript, injectUrlScript, injectRamda } = require('..
 const { scrape } = require('../src/scrape/scrape');
 const { makeDriver } = require('../src/selenium/selenium');
 
-const Driver = makeDriver('MicrosoftEdge');
+const Driver = makeDriver('chrome');
 
 apply(
     Driver.build(),
@@ -13,7 +13,7 @@ apply(
     scrape(
         `https://www.bing.com/`,
         [],
-        function(v, cb){
+        function (v, cb) {
             cb(R.range(0, 56).map(n => n * v))
         }
     ),

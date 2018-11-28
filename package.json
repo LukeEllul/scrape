@@ -16,6 +16,7 @@
   "dependencies": {
     "ramda": "^0.25.0",
     "ramda-fantasy": "^0.8.0",
-    "selenium-webdriver": "^4.0.0-alpha.1"
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "url-exists": "^1.0.3"
   }
 }
