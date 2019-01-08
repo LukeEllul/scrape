@@ -8,6 +8,9 @@ const { scrape, injectBasics, combine } = require('./src/scrape/scrape');
 const { makeDriver, close } = require('./src/selenium/selenium');
 const ActionFunctions = require('./src/low-level/actions');
 
+const WebDriver = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
+
 module.exports = {
     apply,
     get,
@@ -27,5 +30,7 @@ module.exports = {
     injectReadStream,
     injectStreamer,
     ...ActionFunctions,
-    I
+    I,
+    ...WebDriver,
+    chrome
 };
